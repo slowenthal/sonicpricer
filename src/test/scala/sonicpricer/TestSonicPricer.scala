@@ -48,6 +48,8 @@ class TestSonicPricer {
     assertEquals(BigDecimal(300), sp.price(Map(1 -> 4)))
     assertEquals(BigDecimal(100), sp.price(Map(1 -> 1)))
 
+    assertEquals(BigDecimal(22600), sp.price(Map(1 -> 301)))
+
   }
 
   @Test
