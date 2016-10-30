@@ -7,6 +7,7 @@ package object sonicpricer {
 
   type SkuType = Int
   type PriceType = BigDecimal
+  type LineItems = Map[SkuType, Int]
 
   case class LineItem (
       SKU:   SkuType,

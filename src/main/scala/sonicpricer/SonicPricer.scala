@@ -5,12 +5,12 @@ package sonicpricer
   */
 class SonicPricer(
                    individualPrices: Map[SkuType, PriceType],
-                   bundles: Map[Map[SkuType, Int], PriceType]
+                   bundles: Map[LineItems, PriceType]
                  ) {
   // Lets treat bundles as a partial function of  Set[LineItem] -> Price
   // We'll use a map as it implements PartialFunction
 
-  def filterBundles(items: Map[SkuType, Int], bundles: Map[Map[SkuType, Int], PriceType]) =
+  def filterBundles(items: LineItems, bundles: Map[LineItems, PriceType]) =
     bundles.filter {
       case (bundleItems, price) => bundleItems
         // for each item in the bundle - determine if there is sufficient item quantity
@@ -24,13 +24,12 @@ class SonicPricer(
         .reduce(_ && _)
     }
 
-
-  def priceItemsIndividually(items: Map[SkuType, Int]) =
+  def priceItemsIndividually(items: LineItems) =
     items.foldLeft(BigDecimal(0)) { case (total, (sku, quantity)) => total + quantity * individualPrices(sku) }
 
 
-  def subtractQuantities(items: Map[SkuType, SkuType], possibleBundle: (Map[SkuType, Int], PriceType)): Option[Map[SkuType, SkuType]] = {
-    items.foldLeft[Option[Map[SkuType, SkuType]]](Some(Map.empty[SkuType, SkuType])) { case (newMap, (sku, quantity)) =>
+  def subtractQuantities(items: LineItems, possibleBundle: (LineItems, PriceType)): Option[LineItems] = {
+    items.foldLeft[Option[Map[SkuType, Int]]](Some(Map.empty[SkuType, Int])) { case (newMap, (sku, quantity)) =>
       val newQuantity = quantity - possibleBundle._1.getOrElse(sku, 0)
       newQuantity match {
         case 0 => newMap
@@ -40,10 +39,10 @@ class SonicPricer(
     }
   }
 
-  def price(items: Map[SkuType, Int]): PriceType =
+  def price(items: LineItems): PriceType =
     price(items, bundles)
 
-  private def price(items: Map[SkuType, Int], bundles: Map[Map[SkuType, Int], PriceType]): PriceType = {
+  private def price(items: LineItems, bundles: Map[LineItems, PriceType]): PriceType = {
 
     if (items.isEmpty)
       0
