@@ -5,7 +5,7 @@ package sonicpricer
   */
 class SonicPricer(
                    individualPrices: Map[SkuType, PriceType],
-                   bundles: Map[LineItems, PriceType]
+                   allBundles: Map[LineItems, PriceType]
                  ) {
   // Lets treat bundles as a partial function of  Set[LineItem] -> Price
   // We'll use a map as it implements PartialFunction
@@ -40,29 +40,25 @@ class SonicPricer(
   }
 
   def price(items: LineItems): PriceType =
-    price(items, bundles)
+    price(items, allBundles)
 
   private def price(items: LineItems, bundles: Map[LineItems, PriceType]): PriceType = {
 
-    if (items.isEmpty)
-      0
+    if (items.isEmpty) 0
     else {
       // Reduce the number of bundles to the ones that are possible
-      val possibleBundles = filterBundles(items, bundles)
+      val applicableBundles = filterBundles(items, bundles)
 
       // Price the items as individuals
-      var lowest = priceItemsIndividually(items)
+      val individualPrice = priceItemsIndividually(items)
 
-      for (possibleBundle <- possibleBundles) {
-        val bundlePrice = possibleBundles(possibleBundle._1)
-        val remainder = subtractQuantities(items, possibleBundle)
-
-        // If we have a remainder then price is bundle + price of remainder otherwise ignore so keep lowest
-        val newPrice = remainder.map(r => bundlePrice + price(r, possibleBundles)).getOrElse(lowest)
-
-        lowest = lowest min newPrice
+      applicableBundles.foldLeft[BigDecimal](individualPrice) {
+        case (lowest, bundle) =>
+          val bundlePrice = applicableBundles(bundle._1)
+          val remainder = subtractQuantities(items, bundle)
+          val newPrice = remainder.map(r => bundlePrice + price(r, applicableBundles)).getOrElse(lowest)
+          lowest min newPrice
       }
-      lowest
     }
   }
 }
