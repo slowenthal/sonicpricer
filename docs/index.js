@@ -1,0 +1,1 @@
+Index.PACKAGES = {"sbt" : [], "sonicpricer" : [{"case class" : "sonicpricer\/package$$Bundle.html", "name" : "sonicpricer.Bundle"}, {"class" : "sonicpricer\/SonicPricer.html", "name" : "sonicpricer.SonicPricer"}, {"class" : "sonicpricer\/TestSonicPricer.html", "name" : "sonicpricer.TestSonicPricer"}]};

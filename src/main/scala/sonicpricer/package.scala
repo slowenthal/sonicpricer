@@ -12,6 +12,12 @@ package object sonicpricer {
   type LineItems = Map[SkuType, Int]
 
 
+  /**
+    *
+    * @param items - The items and their respective quantities that match this bundle
+    * @param price - The cost to purchase the items in the bundle
+    */
+
   case class Bundle (
       items: Map[SkuType, Int],
       price: BigDecimal
