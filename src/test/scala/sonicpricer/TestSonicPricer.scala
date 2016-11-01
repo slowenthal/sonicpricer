@@ -39,6 +39,16 @@ class TestSonicPricer {
 
   }
 
+
+  @Test
+  def testSubtractItems(): Unit = {
+
+    assertEquals(Some(Map(1 -> 2, 2 -> 3)), subtractQuantities( Map(1 -> 2, 2 -> 3) , Map.empty))
+    assertEquals(None, subtractQuantities( Map(1 -> 2, 2 -> 3) , Map(2 -> 4)))
+    assertEquals(Some(Map(1 -> 2)), subtractQuantities( Map(1 -> 2, 2 -> 3) , Map(2 -> 3)))
+    assertEquals(Some(Map(1 -> 1, 2 -> 1)), subtractQuantities( Map(1 -> 2, 2 -> 3) , Map(2 -> 2, 1 -> 1)))
+  }
+
   @Test
   def testBundles1Sku(): Unit = {
     val sp = new SonicPricer(skus1, bundle1)
@@ -56,11 +66,11 @@ class TestSonicPricer {
   def testBundles2Skus(): Unit = {
     val sp = new SonicPricer(skus1, bundle2)
 
-    println(sp.price(Map(1 -> 2)))
-    println(sp.price(Map(1 -> 1)))
+    assertEquals(BigDecimal(150),sp.price(Map(1 -> 2)))
+    assertEquals(BigDecimal(100),sp.price(Map(1 -> 1)))
 
-    println(sp.price(Map(1 -> 2, 2 -> 4)))
-    println(sp.price(Map(1 -> 2, 2 -> 5)))
+    assertEquals(BigDecimal(275),sp.price(Map(1 -> 2, 2 -> 4)))
+    assertEquals(BigDecimal(475),sp.price(Map(1 -> 2, 2 -> 5)))
 
   }
 
@@ -68,16 +78,18 @@ class TestSonicPricer {
   def testBundles2SkusB(): Unit = {
     val sp = new SonicPricer(skus1, bundle3)
 
-    println(sp.price(Map(1 -> 2)))
-    println(sp.price(Map(1 -> 1)))
-    println(sp.price(Map(2 -> 1)))
-    println(sp.price(Map(2 -> 2)))
+    assertEquals(BigDecimal(150),sp.price(Map(1 -> 2)))
+    assertEquals(BigDecimal(100),sp.price(Map(1 -> 1)))
+    assertEquals(BigDecimal(200),sp.price(Map(2 -> 1)))
+    assertEquals(BigDecimal(400),sp.price(Map(2 -> 2)))
 
-    println(sp.price(Map(1 -> 2, 2 -> 2)))
-    println(sp.price(Map(1 -> 2, 2 -> 4)))
-    println(sp.price(Map(1 -> 4, 2 -> 4)))
-    println(sp.price(Map(1 -> 2, 2 -> 5)))
+    assertEquals(BigDecimal(179),sp.price(Map(1 -> 2, 2 -> 2)))
+    assertEquals(BigDecimal(275),sp.price(Map(1 -> 2, 2 -> 4)))
+    assertEquals(BigDecimal(358),sp.price(Map(1 -> 4, 2 -> 4)))
+    assertEquals(BigDecimal(475),sp.price(Map(1 -> 2, 2 -> 5)))
 
   }
 
 }
+
+
